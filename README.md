@@ -1,42 +1,51 @@
 # Galactic Cargo Management System (GCMS)
 
-So, I got tired of how messy interstellar logistics can get, especially when you're trying to figure out which bin fits that one weirdly shaped hyper-battery. This is GCMS—a C++ project I put together to handle the heavy lifting of cargo management without the usual headaches.
+The Galactic Cargo Management System (GCMS) is a C++ implementation designed for efficient interstellar logistics and inventory management. This system provides a robust framework for managing cargo across distributed storage bins using advanced data structures to ensure high performance and scalability.
 
-It uses some pretty solid data structures (AVL trees, mostly) to make sure everything stays fast and balanced, even when you're tracking thousands of items across different sectors.
+## Overview
 
-## Why this exists
+The primary objective of GCMS is to optimize the allocation of cargo objects to storage bins based on various capacity and sorting requirements. The system utilizes balanced AVL trees to maintain logarithmic time complexity for insertion, deletion, and search operations.
 
-If you've ever had to manage storage bins across a nebula, you know the drill. You need a system that doesn't just find a spot, but finds the right spot based on how you like to pack. I've built in a few different search protocols to handle that:
+### Key Protocols
 
-- Blue Protocol: For when you want the tightest fit possible (compact least).
-- Yellow Protocol: For those who like a bit of breathing room (compact greatest).
-- Red/Green Protocols: For when you just need the biggest bin on the deck (largest least/greatest).
+The system implements four distinct bin selection protocols to accommodate different storage strategies:
 
-## Getting it running
+- Blue Protocol (Compact Least): Selects the bin with the minimum sufficient capacity.
+- Yellow Protocol (Compact Greatest): Selects the bin with the maximum sufficient capacity among those with the same capacity.
+- Red Protocol (Largest Least): Selects the bin with the overall maximum capacity, prioritizing the smallest ID in case of ties.
+- Green Protocol (Largest Greatest): Selects the bin with the overall maximum capacity, prioritizing the largest ID in case of ties.
 
-It's pretty straightforward. Just throw it at a C++ compiler and you're good to go.
+## Technical Implementation
 
-### Compile
-I usually use g++ for this. Run this in your terminal:
+### Data Structures
+- AVL Trees: Custom template implementation providing self-balancing binary search trees.
+- Shared Memory Management: Utilization of `std::shared_ptr` to ensure data consistency and automatic memory management across multiple tree representations of bin data.
+
+### Project Structure
+- GCMS.h/cpp: Orchestrates the core logic and manages the primary indices for bins and objects.
+- Bin.h/cpp: Defines storage bin entities and their internal object management.
+- Object.h: Represents cargo entities with associated metadata.
+- AVLTree.h: Provides a generic, thread-safe (via shared pointers) implementation of the AVL data structure.
+- Exceptions.h: Standardized error handling for capacity and search failures.
+
+## Build and Execution
+
+### Prerequisites
+- A C++ compiler supporting C++11 or higher (e.g., g++).
+
+### Compilation
+To compile the project and its test suite, execute the following command:
 
 ```bash
 g++ -o gcms_control main.cpp Bin.cpp GCMS.cpp -I.
 ```
 
-### Run
-Once it's built, just fire it up:
+### Execution
+To run the compiled binary:
 
 ```bash
 ./gcms_control
 ```
 
-## What's under the hood
-
-- GCMS.h/cpp: The core logic. It manages the trees for objects and bins.
-- Bin.h/cpp: Represents the actual containers. I used shared pointers here so the different trees can track the same bin data without making a mess of memory.
-- AVLTree.h: The template I wrote for the balanced trees. It handles all the rotations and specific search logic.
-- Object.h: A simple class for the items you're storing.
-- Exceptions.h: Basic error handling for when an object just won't fit.
-
----
-Hope this helps keep your cargo organized. Safe travels.
+## Testing
+The included `main.cpp` contains a comprehensive test suite designed to validate the system's compliance with the defined cargo management protocols and capacity constraints.
